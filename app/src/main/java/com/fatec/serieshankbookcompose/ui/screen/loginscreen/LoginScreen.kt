@@ -35,7 +35,7 @@ fun LoginScreen(
 }
 fun GoToMain(navController: NavController){
     navController.navigate(Screen.SerieDiscoveryScreen.route, builder = {
-        popUpTo(Screen.LoginScreen.route){ inclusive = true}
+        popUpTo(Screen.SplashScreen.route){ inclusive = true}
         launchSingleTop = true
     })
 }

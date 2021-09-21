@@ -117,7 +117,9 @@ class MainActivity : ComponentActivity() {
                         sharedViewModel = sharedViewModel
                     )
                     {
-                        SerieListScreen()
+                        SerieListScreen(
+                            navController = navController,
+                        )
                     }
                 }
                 composable(route = Screen.SerieHistoryScreen.route) {
@@ -206,7 +208,9 @@ class MainActivity : ComponentActivity() {
                         sharedViewModel = sharedViewModel
                     )
                     {
-                        MovieListScreen()
+                        MovieListScreen(
+                            navController = navController,
+                        )
                     }
                 }
                 composable(route = Screen.MovieHistoryScreen.route) {

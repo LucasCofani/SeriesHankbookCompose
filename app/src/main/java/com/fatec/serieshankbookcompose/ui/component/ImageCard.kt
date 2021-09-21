@@ -42,7 +42,7 @@ fun ImageCard(
     val imgSRC = "https://image.tmdb.org/t/p/w185/" + item.poster_path
     val lancamento = "" + if (media == "movie") item.release_date else (if (media == "tv") item.first_air_date else "")
     val nota = "" + item.vote_average
-    Log.i("olateste", "$item")
+
 //    var size by remember { mutableStateOf(Size.Zero) }
 
 
@@ -98,7 +98,6 @@ fun ImageCard(
                     ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-
                     softWrap = true
                 )
             }
