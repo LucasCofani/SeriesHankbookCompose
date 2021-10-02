@@ -39,7 +39,10 @@ fun ListCustom(
             .height(140.dp),
         elevation = 5.dp,
         onClick = {
-            navController.navigate(Screen.SerieDetailScreen.route + "/$id")
+            if (media == "tv")
+                navController.navigate(Screen.SerieDetailScreen.route + "/$id")
+            else if (media == "movie")
+                navController.navigate(Screen.MovieDetailScreen.route + "/$id")
         }
     ) {
         Row(

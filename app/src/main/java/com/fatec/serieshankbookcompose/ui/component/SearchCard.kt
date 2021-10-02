@@ -1,5 +1,6 @@
 package com.fatec.serieshankbookcompose.ui.component
 
+import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController

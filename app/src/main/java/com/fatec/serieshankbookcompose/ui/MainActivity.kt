@@ -2,10 +2,11 @@ package com.fatec.serieshankbookcompose.ui
 
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.rememberCoroutineScope
@@ -15,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+
 import com.fatec.serieshankbookcompose.ui.component.TopBarTitle
 import com.fatec.serieshankbookcompose.ui.screen.LoginScreen
 import com.fatec.serieshankbookcompose.ui.screen.Screen
@@ -30,10 +32,13 @@ import com.fatec.serieshankbookcompose.ui.screen.serielistscreen.SerieListScreen
 import com.fatec.serieshankbookcompose.ui.screen.splashscreen.SplashScreen
 import com.fatec.serieshankbookcompose.ui.theme.SeriesHankbookComposeTheme
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.google.android.gms.common.util.CollectionUtils.listOf
+import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val sharedViewModel: SharedViewModel by viewModels()
 
@@ -263,3 +268,21 @@ class MainActivity : ComponentActivity() {
 }
 
 
+fun showDatePicker(
+    activity: AppCompatActivity,
+    updateDate: (Date) -> Unit
+) {
+    val picker = MaterialDatePicker.Builder.datePicker().build()
+
+    picker.show(activity.supportFragmentManager, picker.toString())
+    picker.addOnPositiveButtonClickListener { timestamp ->
+//                val df = SimpleDateFormat("yyyy-MM-dd")
+//                df.timeZone = TimeZone.getTimeZone("UTC")
+//                val netDate = Date(it)
+//                val date = df.format(netDate)
+
+
+        updateDate(Date(timestamp))
+    }
+
+}

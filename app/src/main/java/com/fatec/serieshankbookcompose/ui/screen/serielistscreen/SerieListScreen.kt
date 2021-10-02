@@ -1,31 +1,23 @@
 package com.fatec.serieshankbookcompose.ui.screen.serielistscreen
 
+import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fatec.serieshankbookcompose.ui.component.ListCustom
-import com.fatec.serieshankbookcompose.ui.component.SearchCard
-import com.fatec.serieshankbookcompose.ui.screen.Screen
-import com.fatec.serieshankbookcompose.ui.screen.seriediscoveryscreen.SerieDiscoveryViewModel
-import com.skydoves.landscapist.glide.GlideImage
 
 @ExperimentalMaterialApi
 @Composable
@@ -41,8 +33,11 @@ fun SerieListScreen(
     }
     val listState = rememberLazyListState()
 
-    var selectedTab = remember {
+    val selectedTab = remember {
         mutableStateOf(0)
+    }
+    val detailSelected = remember {
+        mutableStateOf(false)
     }
 
     Column(
@@ -76,7 +71,7 @@ fun SerieListScreen(
         }
         when (selectedTab.value) {
             0 ->
-                if (favList != null) {
+                if (favList != null && !detailSelected.value) {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
@@ -105,12 +100,15 @@ fun SerieListScreen(
                                 nota = nota
                             )
                         }
+
                     }
                 } else {
                     viewModel.getAllFavSeries()
+                    detailSelected.value = false
+                    Log.i("olateste", "SerieListScreen: puxando a lista")
                 }
             1 ->
-                if (laterList != null) {
+                if (laterList != null && !detailSelected.value) {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
@@ -138,12 +136,16 @@ fun SerieListScreen(
                                 lancamento = lancamento,
                                 nota = nota
                             )
+
                         }
                     }
                 } else {
                     viewModel.getAllLaterSeries()
+                    detailSelected.value = false
                 }
         }
     }
 }
+
+
 
