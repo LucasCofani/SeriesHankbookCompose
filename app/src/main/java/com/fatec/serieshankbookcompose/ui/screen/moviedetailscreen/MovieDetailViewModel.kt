@@ -17,12 +17,19 @@ class MovieDetailViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepository
 ) : ViewModel() {
     val detail = mutableStateOf<MovieDetailWrapper?>(null)
+    val favorite = mutableStateOf<Boolean>(false)
 
     fun getDetail(id: Int) {
         viewModelScope.launch {
             val res = apiRepo.getMovieDetail(id= id.toInt())
             if (res.error.isNullOrEmpty()) {
                 detail.value = res.data
+                val list = firebaseRepository.getAllFavMov()
+                list.forEach { idS ->
+                    if (idS.toInt() == id){
+                        favorite.value = true
+                    }
+                }
             }
         }
     }
@@ -30,6 +37,7 @@ class MovieDetailViewModel @Inject constructor(
     fun setFavorite(id: Int) {
         viewModelScope.launch {
             firebaseRepository.setFavMov(id)
+            favorite.value = !favorite.value
         }
     }
 

@@ -1,5 +1,6 @@
 package com.fatec.serieshankbookcompose.ui.screen.seriedetailscreen
 
+import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fatec.serieshankbookcompose.R
@@ -49,6 +51,9 @@ fun SerieDetailScreen(
 ) {
     val detailSerie by remember {
         viewModel.detail
+    }
+    val favoriteSerie by remember {
+        viewModel.favorite
     }
     val openDialog = remember { mutableStateOf(false) }
 
@@ -136,10 +141,25 @@ fun SerieDetailScreen(
                                 contentDescription = "Share",
                                 modifier = Modifier.clickable {
 
+                                    val type = "text/plain"
+                                    val subject = "Compartilhar"
+                                    val extraText = "Veja a serie $nome"
+                                    val shareWith = "Compartilhar com..."
+
+                                    val intent = Intent(Intent.ACTION_SEND)
+                                    intent.type = type
+                                    intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+                                    intent.putExtra(Intent.EXTRA_TEXT, extraText)
+
+                                    ContextCompat.startActivity(
+                                        activity,
+                                        Intent.createChooser(intent, shareWith),
+                                        null
+                                    )
                                 }
                             )
                             Icon(
-                                painter = painterResource(R.drawable.ic_star_empty),
+                                painter = if (favoriteSerie)  painterResource(R.drawable.ic_baseline_favorite) else painterResource(R.drawable.ic_baseline_favorite_border),
                                 contentDescription = "Favorite",
                                 modifier = Modifier.clickable {
                                     viewModel.setFavorite(id)

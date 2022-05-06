@@ -17,11 +17,22 @@ class SerieDetailViewModel @Inject constructor(
 ) : ViewModel() {
     val detail = mutableStateOf<TVDetailWrapper?>(null)
 
+    val favorite = mutableStateOf<Boolean>(false)
+
+
     fun getDetail(id: Int) {
         viewModelScope.launch {
             val res = apiRepo.getTvDetail(id = id.toInt())
             if (res.error.isNullOrEmpty()) {
                 detail.value = res.data
+                val list = firebaseRepository.getAllFavSerie()
+
+                list.forEach { idS ->
+
+                    if (idS.toInt() == id) {
+                        favorite.value = true
+                    }
+                }
             }
         }
     }
@@ -29,6 +40,7 @@ class SerieDetailViewModel @Inject constructor(
     fun setFavorite(id: Int) {
         viewModelScope.launch {
             firebaseRepository.setFavSerie(id)
+            favorite.value = !favorite.value
         }
     }
 

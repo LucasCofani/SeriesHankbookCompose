@@ -1,7 +1,9 @@
 package com.fatec.serieshankbookcompose.ui.screen.moviedetailscreen
 
+import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,12 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fatec.serieshankbookcompose.R
@@ -35,23 +39,30 @@ fun MovieDetailScreen(
     id: Int,
     viewModel: MovieDetailViewModel = hiltViewModel()
 ) {
-    val detailSerie by remember {
+    val detailMovie by remember {
         viewModel.detail
     }
+
+    val favoriteMovie by remember {
+        viewModel.favorite
+    }
+
+    val activity = LocalContext.current as AppCompatActivity
+
     viewModel.getDetail(id)
-    if (detailSerie != null) {
+    if (detailMovie != null) {
         var size by remember { mutableStateOf(IntSize.Zero) }
 
-        val id = detailSerie?.id!!
-        val nome = detailSerie?.title!!
-        val nomeOriginal = detailSerie?.original_title!!
-        val imgSRC = "https://image.tmdb.org/t/p/original/" + detailSerie?.poster_path!!
-        val lancamento = "" + detailSerie?.release_date!!
-        val nota = "" + detailSerie?.vote_average!!
-        val status = detailSerie?.status!!
-        val sobre = detailSerie?.overview!!
-        val genero = detailSerie?.genres!!
-        val network = detailSerie?.production_companies!!
+        val id = detailMovie?.id!!
+        val nome = detailMovie?.title!!
+        val nomeOriginal = detailMovie?.original_title!!
+        val imgSRC = "https://image.tmdb.org/t/p/original/" + detailMovie?.poster_path!!
+        val lancamento = "" + detailMovie?.release_date!!
+        val nota = "" + detailMovie?.vote_average!!
+        val status = detailMovie?.status!!
+        val sobre = detailMovie?.overview!!
+        val genero = detailMovie?.genres!!
+        val network = detailMovie?.production_companies!!
 
         val scrollState = rememberScrollState()
         Box(
@@ -114,11 +125,25 @@ fun MovieDetailScreen(
                                 painter = painterResource(R.drawable.ic_share),
                                 contentDescription = "Share",
                                 modifier = Modifier.clickable {
+                                    val type = "text/plain"
+                                    val subject = "Compartilhar"
+                                    val extraText = "Veja o filme $nome"
+                                    val shareWith = "Compartilhar com..."
 
+                                    val intent = Intent(Intent.ACTION_SEND)
+                                    intent.type = type
+                                    intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+                                    intent.putExtra(Intent.EXTRA_TEXT, extraText)
+
+                                    ContextCompat.startActivity(
+                                        activity,
+                                        Intent.createChooser(intent, shareWith),
+                                        null
+                                    )
                                 }
                             )
                             Icon(
-                                painter = painterResource(R.drawable.ic_star_empty),
+                                painter = if (favoriteMovie) painterResource(R.drawable.ic_baseline_favorite) else painterResource(R.drawable.ic_baseline_favorite_border),
                                 contentDescription = "Favorite",
                                 modifier = Modifier.clickable {
                                     viewModel.setFavorite(id)

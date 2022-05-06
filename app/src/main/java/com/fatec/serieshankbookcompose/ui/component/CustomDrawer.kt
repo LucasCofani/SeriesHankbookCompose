@@ -63,7 +63,7 @@ fun CustomDrawer(
         )
         Divider()
         ListItem(
-            text = { Text("Sair") },
+            text = { Text("Logout") },
             modifier = Modifier.clickable {
                 sharedViewModel.logout()
             }
