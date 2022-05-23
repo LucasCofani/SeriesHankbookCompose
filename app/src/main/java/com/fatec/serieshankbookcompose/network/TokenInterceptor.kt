@@ -12,6 +12,9 @@ import javax.inject.Singleton
 class TokenInterceptor @Inject constructor(
     private val firebaseRepository: FirebaseRepository
 ) : Interceptor {
+    // injeta o token para termos acesso a api
+
+
     override fun intercept(chain: Interceptor.Chain): Response {
         var original = chain.request()
 

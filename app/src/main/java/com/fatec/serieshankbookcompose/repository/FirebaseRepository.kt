@@ -26,15 +26,17 @@ class FirebaseRepository @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
 
-
+    // realiza o logout
     suspend fun logoutFirebase() {
         authUi.signOut(context).await()
+        // não podemos sair de imediado se nao o sistema nao reconhece o logout
         Thread.sleep(500)
         exitProcess(0)
     }
 
-
+    // inicia metodo de login
     fun createLoginIntent(): Intent {
+        // define quais provedores iremos aceitar como login
         val providers = arrayListOf(
             AuthUI.IdpConfig.EmailBuilder().build(),
             AuthUI.IdpConfig.GoogleBuilder().build(),
@@ -50,6 +52,7 @@ class FirebaseRepository @Inject constructor(
             .build()
     }
 
+    // verifica qual email esta logado no sistema
     fun getUserEmail(): String {
         return try {
             firebaseAuth.currentUser?.email!!
@@ -57,7 +60,7 @@ class FirebaseRepository @Inject constructor(
             "Erro"
         }
     }
-
+    // pega o token da api no firebase
     suspend fun getAPIKeyAsync(): String {
         return try {
             val appSettings = db.collection(APICol).document(APIDoc).get().await()
@@ -66,9 +69,11 @@ class FirebaseRepository @Inject constructor(
             "Erro"
         }
     }
-
-    // Favorite
-
+    /*
+        firebaseAuth.currentUser.uid seria o codigo unico do usuario, ele é usado
+        como chave para todas as listas do sistema
+     */
+    // pega as informações de favoritos de filmes no firebase
     suspend fun getAllFavMov(): List<String> {
         return try {
             val appSettings =
@@ -78,7 +83,7 @@ class FirebaseRepository @Inject constructor(
             listOf()
         }
     }
-
+    // pega as informações de favoritos de filmes no firebase
     suspend fun getAllFavSerie(): List<String> {
         return try {
             val appSettings =
@@ -88,7 +93,7 @@ class FirebaseRepository @Inject constructor(
             listOf()
         }
     }
-
+    // adiciona novos favoritos de series no firebase
     suspend fun setFavSerie(id: Int) {
         try {
             val appSettings = db.collection(APIDocCustom).document(firebaseAuth.currentUser?.uid!!)
@@ -104,6 +109,7 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
+    // adiciona novos favoritos de filmes no firebase
     suspend fun setFavMov(id: Int) {
         try {
             val appSettings = db.collection(APIDocCustom).document(firebaseAuth.currentUser?.uid!!)
@@ -119,8 +125,7 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
-    // Later
-
+    // pega lista assistir mais tarde de series no firebase
     suspend fun getAllLaterSerie(): List<String> {
         return try {
             val appSettings =
@@ -130,7 +135,7 @@ class FirebaseRepository @Inject constructor(
             listOf()
         }
     }
-
+    // pega lista assistir mais tarde de filmes no firebase
     suspend fun getAllLaterMov(): List<String> {
         return try {
             val appSettings =
@@ -140,7 +145,7 @@ class FirebaseRepository @Inject constructor(
             listOf()
         }
     }
-
+    // adiciona novos assistir mais tarde de series no firebase
     suspend fun setLaterSerie(id: Int) {
         try {
             val appSettings = db.collection(APIDocCustom).document(firebaseAuth.currentUser?.uid!!)
@@ -156,6 +161,7 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
+    // adiciona novos assistir mais tarde de filmes no firebase
     suspend fun setLaterMov(id: Int) {
         try {
             val appSettings = db.collection(APIDocCustom).document(firebaseAuth.currentUser?.uid!!)
@@ -170,6 +176,8 @@ class FirebaseRepository @Inject constructor(
             Log.i("olateste", "setLaterSerie: ${e.message}")
         }
     }
+
+    // função para verificao de primeiro login e criação do banco com a chave do usuario
     suspend fun createUserDoc(){
         try {
             val newUser = hashMapOf(

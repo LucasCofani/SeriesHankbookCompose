@@ -10,7 +10,7 @@ import com.fatec.serieshankbookcompose.repository.TMDBApiRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
+//classe com funções comuns que serão utilizadas em todas as demais
 @HiltViewModel
 class SharedViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepository,

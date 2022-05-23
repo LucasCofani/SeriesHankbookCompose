@@ -9,6 +9,8 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ITMDBApi {
+    // configura os end-points para trazer as informações que precisamos de acordo
+    // com https://developers.themoviedb.org/3/getting-started/introduction
 
     @GET("tv/{tv_id}")
     suspend fun getTVDetail(

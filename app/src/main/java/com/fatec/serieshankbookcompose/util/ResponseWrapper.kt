@@ -1,5 +1,6 @@
 package com.fatec.serieshankbookcompose.util
 
+// classe generica para pegar o resultado dos gets da api
 sealed class ResponseWrapper<T>(
     val loading: Boolean = false,
     val data: T? = null,

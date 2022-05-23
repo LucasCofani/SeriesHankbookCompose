@@ -13,6 +13,8 @@ import javax.inject.Singleton
 class TMDBApiRepository @Inject constructor(
     private val api: ITMDBApi
 ) {
+    // faz as requisições de acordo com os end-points do network e transforma nas classses
+    // correspondentes
     suspend fun getSearch(searchString: String): ResponseWrapper<SearchWrapper> {
         return try {
             ResponseWrapper.Success(api.getSearch(query = searchString))

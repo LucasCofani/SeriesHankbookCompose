@@ -27,7 +27,6 @@ object AppModule {
     @Provides
     fun provideFirebaseAuth() = Firebase.auth
 
-
     @Provides
     fun provideFirebaseAuthUI() = AuthUI.getInstance()
 
@@ -45,6 +44,7 @@ object AppModule {
         interceptor: TokenInterceptor,
         httpLoggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
+        //configura tempo de tentativa de alcançar a api
         return OkHttpClient.Builder()
             .addInterceptor(interceptor)
             //.addInterceptor(httpLoggingInterceptor)
@@ -56,6 +56,7 @@ object AppModule {
 
     @Provides
     fun provideTMDBApi(okHttpClient : OkHttpClient): ITMDBApi {
+        //configura o endereço base da api
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(BASE_URL)
