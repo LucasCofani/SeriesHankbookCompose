@@ -7,9 +7,11 @@ import com.fatec.serieshankbookcompose.util.APICol
 import com.fatec.serieshankbookcompose.util.APIDoc
 import com.fatec.serieshankbookcompose.util.APIDocCustom
 import com.firebase.ui.auth.AuthUI
+import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -90,8 +92,8 @@ class FirebaseRepository @Inject constructor(
     suspend fun setFavSerie(id: Int) {
         try {
             val appSettings = db.collection(APIDocCustom).document(firebaseAuth.currentUser?.uid!!)
-            val list = getAllFavSerie()
 
+            val list = getAllFavSerie()
             if (list.contains(id.toString()))
                 appSettings.update("FavSeries", FieldValue.arrayRemove(id.toString())).await()
             else
@@ -166,6 +168,16 @@ class FirebaseRepository @Inject constructor(
 
         } catch (e: java.lang.Exception) {
             Log.i("olateste", "setLaterSerie: ${e.message}")
+        }
+    }
+    suspend fun createUserDoc(){
+        try {
+            val newUser = hashMapOf(
+                "firstLogin" to "1",
+            )
+            db.collection(APIDocCustom).document(firebaseAuth.currentUser?.uid!!).set(newUser).await()
+        }catch (e : java.lang.Exception){
+            Log.i("olateste", "createUserDoc: ${e.message}")
         }
     }
 }

@@ -43,7 +43,11 @@ class SharedViewModel @Inject constructor(
     fun getUserEmail() {
         loggedUser.value = firebaseRepository.getUserEmail()
     }
-
+    fun createUserDoc(){
+        viewModelScope.launch {
+            firebaseRepository.createUserDoc()
+        }
+    }
     fun loginAttempt(){
         loggedUser.value = "desistiu"
     }

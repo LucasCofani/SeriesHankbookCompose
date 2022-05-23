@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         ) { res ->
             if (res.resultCode == RESULT_OK) {
                 sharedViewModel.getUserEmail()
+                sharedViewModel.createUserDoc()
             } else {
                 sharedViewModel.loginAttempt()
             }
