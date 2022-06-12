@@ -1,8 +1,10 @@
 package com.fatec.serieshankbookcompose.ui.screen.seriedetailscreen
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fatec.serieshankbookcompose.data.remote.ResultX
 import com.fatec.serieshankbookcompose.data.remote.TVDetailWrapper
 import com.fatec.serieshankbookcompose.repository.FirebaseRepository
 import com.fatec.serieshankbookcompose.repository.TMDBApiRepository
@@ -18,6 +20,7 @@ class SerieDetailViewModel @Inject constructor(
     val detail = mutableStateOf<TVDetailWrapper?>(null)
 
     val favorite = mutableStateOf<Boolean>(false)
+    val similar = mutableStateOf<MutableList<ResultX>?>(null)
 
 
     fun getDetail(id: Int) {
@@ -34,6 +37,7 @@ class SerieDetailViewModel @Inject constructor(
                     }
                 }
             }
+            getSimilar(id)
         }
     }
 
@@ -52,5 +56,15 @@ class SerieDetailViewModel @Inject constructor(
 
     fun setWatched(id: Int) {
 
+    }
+
+    fun getSimilar(id: Int){
+        viewModelScope.launch {
+
+            if (similar.value == null){
+                val resSimilar = apiRepo.getTvSimilar(id)
+                similar.value = resSimilar.data?.results!!
+            }
+        }
     }
 }

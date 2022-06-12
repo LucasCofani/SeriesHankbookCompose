@@ -35,6 +35,8 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fatec.serieshankbookcompose.R
+import com.fatec.serieshankbookcompose.ui.component.ImageCard
+import com.fatec.serieshankbookcompose.ui.screen.Screen
 import com.fatec.serieshankbookcompose.ui.showDatePicker
 import com.skydoves.landscapist.glide.GlideImage
 import java.lang.Float.min
@@ -42,6 +44,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @RequiresApi(Build.VERSION_CODES.N)
 @Composable
 fun SerieDetailScreen(
@@ -54,6 +57,9 @@ fun SerieDetailScreen(
     }
     val favoriteSerie by remember {
         viewModel.favorite
+    }
+    val similar by remember {
+        viewModel.similar
     }
     val openDialog = remember { mutableStateOf(false) }
 
@@ -319,6 +325,43 @@ fun SerieDetailScreen(
                             )
                         }
                     }
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp)
+                    )
+                    Text(text = "Similares a este:", textAlign = TextAlign.Justify, fontSize = 16.sp)
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp)
+                    )
+                    if (similar != null) {
+                        LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp)
+                        ) {
+                            itemsIndexed(
+                                items = similar!!
+                            ) { _, res ->
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.4f)
+                                        .padding(8.dp)
+                                ) {
+                                    ImageCard(
+                                        item = res,
+                                        onClick = GoToDetail(
+                                            navController
+                                        ),
+                                        mediaInfo = "tv"
+                                    )
+                                }
+                            }
+                        }
+                    }
+
                 }
             }
         }
@@ -380,4 +423,9 @@ fun SerieDetailScreen(
     } else {
         viewModel.getDetail(id)
     }
+}
+@Composable
+private fun GoToDetail(navController: NavController): (Int) -> Unit =
+{
+    navController.navigate(Screen.SerieDetailScreen.route + "/$it")
 }

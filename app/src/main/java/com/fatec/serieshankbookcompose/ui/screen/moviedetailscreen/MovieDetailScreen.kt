@@ -7,8 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -29,9 +32,12 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fatec.serieshankbookcompose.R
+import com.fatec.serieshankbookcompose.ui.component.ImageCard
+import com.fatec.serieshankbookcompose.ui.screen.Screen
 import com.skydoves.landscapist.glide.GlideImage
 import java.lang.Float
 
+@OptIn(ExperimentalMaterialApi::class)
 @RequiresApi(Build.VERSION_CODES.N)
 @Composable
 fun MovieDetailScreen(
@@ -45,6 +51,9 @@ fun MovieDetailScreen(
 
     val favoriteMovie by remember {
         viewModel.favorite
+    }
+    val similar by remember {
+        viewModel.similar
     }
 
     val activity = LocalContext.current as AppCompatActivity
@@ -179,8 +188,49 @@ fun MovieDetailScreen(
                             )
                         }
                     }
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp)
+                    )
+                    Text(text = "Similares a este:", textAlign = TextAlign.Justify, fontSize = 16.sp)
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp)
+                    )
+                    if (similar != null) {
+                        LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp)
+                        ) {
+                            itemsIndexed(
+                                items = similar!!
+                            ) { _, res ->
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.4f)
+                                        .padding(8.dp)
+                                ) {
+                                    ImageCard(
+                                        item = res,
+                                        onClick = GoToDetail(
+                                            navController
+                                        ),
+                                        mediaInfo = "tv"
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
+@Composable
+private fun GoToDetail(navController: NavController): (Int) -> Unit =
+    {
+        navController.navigate(Screen.MovieDetailScreen.route + "/$it")
+    }

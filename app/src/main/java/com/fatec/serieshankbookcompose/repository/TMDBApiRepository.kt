@@ -77,4 +77,20 @@ class TMDBApiRepository @Inject constructor(
         }
     }
 
+    suspend fun getTvSimilar(id: Int): ResponseWrapper<DiscoveryWrapper> {
+        return try {
+            ResponseWrapper.Success(api.getTVSimilar(id))
+        }catch (e : Exception){
+            ResponseWrapper.Error(error=e.message!!)
+        }
+    }
+
+    suspend fun getMovieSimilar(id: Int): ResponseWrapper<DiscoveryWrapper> {
+        return try {
+            ResponseWrapper.Success(api.getMovieSimilar(id))
+        }catch (e : Exception){
+            ResponseWrapper.Error(error=e.message!!)
+        }
+    }
+
 }
