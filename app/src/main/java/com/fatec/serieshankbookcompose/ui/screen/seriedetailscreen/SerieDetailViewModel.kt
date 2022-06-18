@@ -10,6 +10,7 @@ import com.fatec.serieshankbookcompose.repository.FirebaseRepository
 import com.fatec.serieshankbookcompose.repository.TMDBApiRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -54,13 +55,14 @@ class SerieDetailViewModel @Inject constructor(
         }
     }
 
-    fun setWatched(id: Int) {
-
+    fun setWatched(id: Int,date: Date,season : Int) {
+        viewModelScope.launch {
+            firebaseRepository.setSeriesWatched(id,date,season)
+        }
     }
 
     fun getSimilar(id: Int){
         viewModelScope.launch {
-
             if (similar.value == null){
                 val resSimilar = apiRepo.getTvSimilar(id)
                 similar.value = resSimilar.data?.results!!

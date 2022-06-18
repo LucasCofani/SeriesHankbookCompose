@@ -11,6 +11,7 @@ import com.fatec.serieshankbookcompose.repository.FirebaseRepository
 import com.fatec.serieshankbookcompose.repository.TMDBApiRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,6 +60,12 @@ class MovieDetailViewModel @Inject constructor(
                 val resSimilar = apiRepo.getMovieSimilar(id)
                 similar.value = resSimilar.data?.results!!
             }
+        }
+    }
+
+    fun setWatched(id: Int, date: Date) {
+        viewModelScope.launch {
+            firebaseRepository.setMoviesWatched(id,date)
         }
     }
 }

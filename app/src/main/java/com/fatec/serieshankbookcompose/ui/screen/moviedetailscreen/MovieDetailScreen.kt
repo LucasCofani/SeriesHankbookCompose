@@ -11,13 +11,11 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -34,8 +32,11 @@ import androidx.navigation.NavController
 import com.fatec.serieshankbookcompose.R
 import com.fatec.serieshankbookcompose.ui.component.ImageCard
 import com.fatec.serieshankbookcompose.ui.screen.Screen
+import com.fatec.serieshankbookcompose.ui.showDatePicker
 import com.skydoves.landscapist.glide.GlideImage
 import java.lang.Float
+import java.text.SimpleDateFormat
+import java.util.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @RequiresApi(Build.VERSION_CODES.N)
@@ -48,6 +49,9 @@ fun MovieDetailScreen(
     val detailMovie by remember {
         viewModel.detail
     }
+    val openDialog = remember { mutableStateOf(false) }
+
+    val selectedDate = remember { mutableStateOf(Date(0)) }
 
     val favoriteMovie by remember {
         viewModel.favorite
@@ -56,9 +60,12 @@ fun MovieDetailScreen(
         viewModel.similar
     }
 
+    val df = SimpleDateFormat("dd/MM/yyyy")
+    df.timeZone = TimeZone.getTimeZone("UTC")
+
     val activity = LocalContext.current as AppCompatActivity
 
-    viewModel.getDetail(id)
+
     if (detailMovie != null) {
         var size by remember { mutableStateOf(IntSize.Zero) }
 
@@ -111,7 +118,7 @@ fun MovieDetailScreen(
                     {
                         Text(text = nome,
                             modifier= Modifier
-                                .width(( (size.width.dp-204.dp) /(3f).dp).dp)
+                                .width(( (size.width.dp-240.dp) /(3f).dp).dp)
                             //.background(Color.White)
 //                                .onGloballyPositioned{
 //                                    Log.i("olateste", "Title: ${it.size.width.dp} ")
@@ -124,7 +131,7 @@ fun MovieDetailScreen(
 
                             )
                         Row(modifier = Modifier
-                            .width(90.dp)
+                            .width(116.dp)
                             .padding(end = 16.dp)
 //                            .background(Color.Black)
                             .align(Alignment.CenterVertically),
@@ -163,6 +170,13 @@ fun MovieDetailScreen(
                                 contentDescription = "Later",
                                 modifier = Modifier.clickable {
                                     viewModel.setLater(id)
+                                }
+                            )
+                            Icon(
+                                painter = painterResource(R.drawable.ic_eye),
+                                contentDescription = "Watched",
+                                modifier = Modifier.clickable {
+                                    openDialog.value = true
                                 }
                             )
                         }
@@ -227,6 +241,63 @@ fun MovieDetailScreen(
                 }
             }
         }
+        if (openDialog.value) {
+            selectedDate.value = Date(0)
+            AlertDialog(onDismissRequest = { openDialog.value = false },
+                title = {
+                    Text(text = "Assistido")
+                },
+                text = {
+                    Column {
+                        Text(
+                            text = "Quando você assistiu?"
+                        )
+                        if (selectedDate.value == Date(0))
+                            Text(
+                                text = if (selectedDate.value != Date(0))  selectedDate.value.toString() else "Toque aqui para adicionar uma data!" ,
+                                modifier = Modifier.clickable {
+                                    showDatePicker(activity) { selDate ->
+                                        selectedDate.value = selDate
+                                    }
+                                }
+                            )
+                        else
+                            Text(text = "${df.format(selectedDate.value)}",
+                                modifier = Modifier.clickable {
+                                    showDatePicker(activity) { selDate ->
+                                        selectedDate.value = selDate
+                                    }
+                                })
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            openDialog.value = false
+                            viewModel.setWatched(id,selectedDate.value)
+                        },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primaryVariant)
+                    ) {
+                        Text(
+                            text = "Salvar"
+                        )
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = {
+                            openDialog.value = false
+                        },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+                    ) {
+                        Text(
+                            text = "Cancelar"
+                        )
+                    }
+                })
+        }
+    }else{
+        viewModel.getDetail(id)
     }
 }
 @Composable

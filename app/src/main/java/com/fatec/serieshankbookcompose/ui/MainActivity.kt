@@ -146,7 +146,10 @@ class MainActivity : AppCompatActivity() {
                         sharedViewModel = sharedViewModel
                     )
                     {
-                        SerieHistoryScreen()
+                        SerieHistoryScreen(
+                            navController = navController,
+                            sharedViewModel = sharedViewModel
+                        )
                     }
                 }
                 composable(
@@ -237,7 +240,10 @@ class MainActivity : AppCompatActivity() {
                         sharedViewModel = sharedViewModel
                     )
                     {
-                        MovieHistoryScreen()
+                        MovieHistoryScreen(
+                            navController = navController,
+                            sharedViewModel = sharedViewModel
+                        )
                     }
                 }
                 composable(

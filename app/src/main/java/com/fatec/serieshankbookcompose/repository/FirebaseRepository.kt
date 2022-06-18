@@ -3,19 +3,26 @@ package com.fatec.serieshankbookcompose.repository
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.fatec.serieshankbookcompose.data.Watched
+import com.fatec.serieshankbookcompose.data.WatchedSerie
 import com.fatec.serieshankbookcompose.util.APICol
 import com.fatec.serieshankbookcompose.util.APIDoc
 import com.fatec.serieshankbookcompose.util.APIDocCustom
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.FirebaseException
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.collections.HashMap
 import kotlin.system.exitProcess
 
 @Singleton
@@ -188,4 +195,106 @@ class FirebaseRepository @Inject constructor(
             Log.i("olateste", "createUserDoc: ${e.message}")
         }
     }
+    suspend fun getAllSeriesWatched():List<WatchedSerie>{
+        try {
+            var saida : MutableList<WatchedSerie> = mutableListOf<WatchedSerie>()
+            val appSettings =
+                db.collection(APIDocCustom).document(firebaseAuth.currentUser?.uid!!).get()
+                    .await()
+            var list = appSettings.get("WatchedSeries") as List<HashMap<String,Any>>
+            list.forEach {
+                val id = it.get("id").toString().toInt()
+                val date = it.get("date").toString().toLong()
+                val season = it.get("season").toString().toInt()
+                saida!!.add(
+                    WatchedSerie(id,date,season)
+                )
+            }
+            return saida!!
+        } catch (e: Exception) {
+            Log.i("olateste", "getAllSeriesWatched: ${e.message}")
+            return listOf()
+        }
+    }
+
+    suspend fun setSeriesWatched(id:Int,date: Date, season : Int){
+        try {
+            val appSettings = db.collection(APIDocCustom).document(firebaseAuth.currentUser?.uid!!)
+            val list = getAllSeriesWatched()
+            var inList = false
+            var listValue : HashMap<String,Any>? = null
+            val insertData = WatchedSerie(
+                id,
+                date.time,
+                season
+            )
+            list.forEach {
+                if (it.equals(insertData)) {
+                    inList = true
+                    listValue = hashMapOf(
+                        "date" to it.date,
+                        "id" to it.id,
+                        "season" to it.season
+                    )
+                }
+            }
+            if (inList)
+                appSettings.update("WatchedSeries", FieldValue.arrayRemove(listValue)).await()
+            else
+                appSettings.update("WatchedSeries", FieldValue.arrayUnion( insertData )).await()
+        }catch (e: java.lang.Exception){
+            Log.i("olateste", "setLaterSerie: ${e.message}")
+        }
+    }
+
+    suspend fun getAllMoviesWatched():List<Watched>{
+        try {
+            var saida : MutableList<Watched> = mutableListOf<Watched>()
+            val appSettings =
+                db.collection(APIDocCustom).document(firebaseAuth.currentUser?.uid!!).get()
+                    .await()
+            var list = appSettings.get("WatchedMovie") as List<HashMap<String,Any>>
+            list.forEach {
+                val id = it.get("id").toString().toInt()
+                val date = it.get("date").toString().toLong()
+                saida!!.add(
+                    Watched(id,date)
+                )
+            }
+            return saida!!
+        } catch (e: Exception) {
+            Log.i("olateste", "getAllSeriesWatched: ${e.message}")
+            return listOf()
+        }
+    }
+
+    suspend fun setMoviesWatched(id:Int,date: Date){
+        try {
+            val appSettings = db.collection(APIDocCustom).document(firebaseAuth.currentUser?.uid!!)
+            val list = getAllMoviesWatched()
+            var inList = false
+            var listValue : HashMap<String,Any>? = null
+            val insertData = Watched(
+                id,
+                date.time
+            )
+            list.forEach {
+                if (it.equals(insertData)) {
+                    inList = true
+                    listValue = hashMapOf(
+                        "date" to it.date,
+                        "id" to it.id
+                    )
+                }
+            }
+            if (inList)
+                appSettings.update("WatchedMovie", FieldValue.arrayRemove(listValue)).await()
+            else
+                appSettings.update("WatchedMovie", FieldValue.arrayUnion( insertData )).await()
+        }catch (e: java.lang.Exception){
+            Log.i("olateste", "setLaterSerie: ${e.message}")
+        }
+    }
+
+
 }

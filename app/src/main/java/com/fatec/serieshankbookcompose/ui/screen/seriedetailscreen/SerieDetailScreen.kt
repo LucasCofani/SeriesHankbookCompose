@@ -63,7 +63,7 @@ fun SerieDetailScreen(
     }
     val openDialog = remember { mutableStateOf(false) }
 
-    val selectedDate = remember { mutableStateOf(Date(1)) }
+    val selectedDate = remember { mutableStateOf(Date(0)) }
 
     val activity = LocalContext.current as AppCompatActivity
 
@@ -379,7 +379,7 @@ fun SerieDetailScreen(
                         )
                         if (selectedDate.value == Date(0))
                             Text(
-                                text = "Toque aqui para adicionar uma data!",
+                                text = if (selectedDate.value != Date(0))  selectedDate.value.toString() else "Toque aqui para adicionar uma data!" ,
                                 modifier = Modifier.clickable {
                                     showDatePicker(activity) { selDate ->
                                         selectedDate.value = selDate
@@ -399,6 +399,7 @@ fun SerieDetailScreen(
                     Button(
                         onClick = {
                             openDialog.value = false
+                            viewModel.setWatched(id,selectedDate.value,selectedSeason.value!!)
                         },
                         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primaryVariant)
                     ) {
